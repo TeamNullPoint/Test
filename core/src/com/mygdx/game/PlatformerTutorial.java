@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.uwsoft.editor.renderer.SceneLoader;
+import com.uwsoft.editor.renderer.components.TransformComponent;
 import com.uwsoft.editor.renderer.components.additional.ButtonComponent;
 import com.uwsoft.editor.renderer.data.SimpleImageVO;
 import com.uwsoft.editor.renderer.resources.ResourceManager;
@@ -21,6 +22,7 @@ public class PlatformerTutorial extends ApplicationAdapter {
     private static ResourceManager resourceManager;
     private AssetManager assetManager;
     private static Player player;
+    private static Enemy enemy;
     private static UIStage uiStage;
     private static ItemWrapper root;
     private static Boolean playing = false;
@@ -50,9 +52,11 @@ public class PlatformerTutorial extends ApplicationAdapter {
             public void touchUp() {
                 level();
             }
+
             @Override
             public void touchDown() {
             }
+
             @Override
             public void clicked() {
             }
@@ -107,19 +111,22 @@ public class PlatformerTutorial extends ApplicationAdapter {
         sceneLoader = new SceneLoader(resourceManager);
         sceneLoader.loadScene(NullConstants.MAIN_SCENE, viewport);
         root = new ItemWrapper(sceneLoader.getRoot());
+
         player = new Player(sceneLoader.world);
         root.getChild(NullConstants.PLAYER).addScript(player);
 
+        enemy = new Enemy(sceneLoader.world, player);
+        root.getChild(NullConstants.ENEMY).addScript(enemy);
         uiStage = new UIStage(sceneLoader.getRm());
 
         sceneLoader.addComponentsByTagName(NullConstants.PLATFORM, PlatformComponent.class);
-//        sceneLoader.addComponentsByTagName(NullConstants.ENEMY, CollisionComponent.class);
-        sceneLoader.addComponentsByTagName(NullConstants.ENEMY, EnemyComponent.class);
+        sceneLoader.addComponentsByTagName(NullConstants.ENEMY, CollisionComponent.class);
+        //sceneLoader.addComponentsByTagName(NullConstants.ENEMY, EnemyComponent.class);
 
 
         sceneLoader.getEngine().addSystem(new PlatformSystem());
-  //      sceneLoader.getEngine().addSystem(new CollisionSystem(player));
-        sceneLoader.getEngine().addSystem(new EnemySystem(player));
+        sceneLoader.getEngine().addSystem(new CollisionSystem(player));
+        //sceneLoader.getEngine().addSystem(new EnemySystem(player));
 
         playing = true;
     }
